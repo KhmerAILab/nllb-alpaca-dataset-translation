@@ -115,9 +115,9 @@ def translate_dataframe(df):
     os.makedirs(output_dir, exist_ok=True)
 
     # Check for dataframe rows that are not translatable
-    df['instruction'] = df.instruction.apply(lambda x: x if is_translatable(x) else None, axis=1)
-    df['input'] = df.input.apply(lambda x: x if is_translatable(x) else None, axis=1)
-    df['output'] = df.output.apply(lambda x: x if is_translatable(x) else None, axis=1)
+    df['instruction'] = df.instruction.apply(lambda x: x if is_translatable(x) else None)
+    df['input'] = df.input.apply(lambda x: x if is_translatable(x) else None)
+    df['output'] = df.output.apply(lambda x: x if is_translatable(x) else None)
 
     # Drop rows with None
     df = df.dropna()
