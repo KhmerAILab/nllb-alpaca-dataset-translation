@@ -20,7 +20,6 @@ def write_json_file(blob, file_path):
     with open(file_path, 'w') as file:
             json.dump(blob, file)
 
-
 # 2.Utils
 def matches_regex(regex, text):
     return bool(re.compile(regex).search(text))
