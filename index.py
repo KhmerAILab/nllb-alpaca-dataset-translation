@@ -157,10 +157,10 @@ login_hugging_face(None)
 print('Loading tokenizer and model')
 tokenizer = AutoTokenizer.from_pretrained(
         "facebook/nllb-200-distilled-600M", use_auth_token=True, src_lang="eng_Latn"
-)
+).to("cuda")
 model = AutoModelForSeq2SeqLM.from_pretrained(
     "facebook/nllb-200-distilled-600M", use_auth_token=True
-)
+).to("cuda")
 print('Tokenizer and model loaded')
 
 # Translate
