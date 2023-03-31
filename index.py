@@ -111,7 +111,7 @@ def translate_dataframe(df):
         input_list_translated = translate_and_update_series(chunk_df.input)
         output_list_translated = translate_and_update_series(chunk_df.output)
         
-        translated_df = pd.DataFrame({'instruction': instruction_list_translated, 'input': input_list_translated, 'output': output_list_translated})
+        translated_df = pd.DataFrame({'instruction': instruction_list_translated, 'input': input_list_translated, 'output': output_list_translated}, index=[0])
         translated_dict = translated_df.to_dict('records')
         
         write_json_file(translated_dict, f'{output_dir}chunk{start_index+index}.json')
