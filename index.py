@@ -92,14 +92,14 @@ def login_hugging_face(token: str) -> None:
 
 
 def nllb_translate(text_list):
-    inputs = tokenizer(text_list, return_tensors="pt", padding=True)
+    inputs = tokenizer(text_list, return_tensors="pt", padding=True).to("cuda")
 
     translated_tokens = model.generate(
         **inputs,
         forced_bos_token_id=tokenizer.lang_code_to_id["khm_Khmr"],
         max_length=2048,
     )
-    res_nllb = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)
+    res_nllb = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True).to("cpu")
     return res_nllb
 
 
