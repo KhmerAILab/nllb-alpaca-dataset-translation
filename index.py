@@ -99,7 +99,7 @@ def nllb_translate(text_list):
         forced_bos_token_id=tokenizer.lang_code_to_id["khm_Khmr"],
         max_length=2048,
     )
-    res_nllb = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True).to("cpu")
+    res_nllb = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)
     return res_nllb
 
 
