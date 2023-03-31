@@ -68,18 +68,8 @@ def translate_and_update_series(text_series):
                
     return translated_list
 
-def login_hugging_face(token: str) -> None:
-    """
-    Loging to Hugging Face portal with a given token.
-    """
-    api = HfApi()
-    api.set_access_token(token)
-    folder = HfFolder()
-    folder.save_token(token)
-
-    return None
-tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M", use_auth_token=True, src_lang="eng_Latn")
-model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M", use_auth_token=True)
+tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M", use_auth_token=False, src_lang="eng_Latn")
+model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M", use_auth_token=False)
 
 def nllb_translate(text_list):
 
@@ -115,8 +105,6 @@ def translate_dataframe(df):
         translated_dict = translated_df.to_dict('records')
         
         write_json_file(translated_dict, f'{output_dir}chunk{start_index+index}.json')
-#Never actually ran the function in the last commit kek
-login_hugging_face('el hugging face token')
 translate_dataframe(df)
 
 def combine_chunks():
