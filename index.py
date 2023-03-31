@@ -10,12 +10,12 @@ import os
 
 # 1. Load dataset
 
-input_tasks_path = "tasks_translated.json"
+input_tasks_path = "alpaca_data_cleaned.json"
 
 with open(input_tasks_path, "rb") as f:
     json_data = json.loads(f.read())
-    df = pd.DataFrame(json_data)
-    
+    df = pd.DataFrame(json_data, index=[0])
+
 def write_json_file(blob, file_path):
     with open(file_path, 'w') as file:
             json.dump(blob, file)
@@ -59,10 +59,13 @@ def translate_and_update_series(text_series):
     translated_list = translate_list(text_list)
 
     # if list contains non-translatable content, replace accordingly
+    # This part is broken, hours wasted: 1
     if is_translatable_index.sum() > 0:
         for index, text_is_translatable in enumerate(is_translatable_index.tolist()):
+
             if text_is_translatable:
                 translated_list[index] = text_list_source_language[index]
+               
     return translated_list
 
 def login_hugging_face(token: str) -> None:
@@ -82,7 +85,7 @@ def nllb_translate(text_list):
 
     inputs = tokenizer(text_list, return_tensors="pt", padding = True)
 
-    translated_tokens = model.generate(**inputs, forced_bos_token_id=tokenizer.lang_code_to_id["khm_Khmer"], max_length=100)
+    translated_tokens = model.generate(**inputs, forced_bos_token_id=tokenizer.lang_code_to_id["khm_Khmr"], max_length=1000)
     res_nllb = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
     return res_nllb
 
@@ -90,7 +93,8 @@ def translate_list(text_list):
     #combined_response = translator.translate_text(text_list, source_lang="EN", target_lang=TARGET_LANG, formality=FORMALITY)
     combined_response = nllb_translate(text_list)
 
-    return [response.text for response in combined_response]
+    #return [response.text for response in combined_response]
+    return combined_response
 
 chunk_size = 5
 output_dir = './data/output/'
@@ -111,6 +115,9 @@ def translate_dataframe(df):
         translated_dict = translated_df.to_dict('records')
         
         write_json_file(translated_dict, f'{output_dir}chunk{start_index+index}.json')
+#Never actually ran the function in the last commit kek
+login_hugging_face('el hugging face token')
+translate_dataframe(df)
 
 def combine_chunks():
     translated_tasks_list = []
