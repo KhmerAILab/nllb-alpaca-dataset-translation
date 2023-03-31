@@ -14,7 +14,7 @@ input_tasks_path = "alpaca_data_cleaned.json"
 
 with open(input_tasks_path, "rb") as f:
     json_data = json.loads(f.read())
-    df = pd.DataFrame(json_data, index=[0])
+    df = pd.DataFrame(json_data)
 
 def write_json_file(blob, file_path):
     with open(file_path, 'w') as file:
