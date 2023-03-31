@@ -78,10 +78,10 @@ def login_hugging_face(token: str) -> None:
     folder.save_token(token)
 
     return None
+tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M", use_auth_token=True, src_lang="eng_Latn")
+model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M", use_auth_token=True)
 
 def nllb_translate(text_list):
-    tokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M", use_auth_token=True, src_lang="eng_Latn")
-    model = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M", use_auth_token=True)
 
     inputs = tokenizer(text_list, return_tensors="pt", padding = True)
 
