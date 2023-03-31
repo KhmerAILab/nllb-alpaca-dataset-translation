@@ -131,7 +131,7 @@ def translate_dataframe(df):
 
     start_index = 1
     print('Translate..')
-    for index, chunk_df in tqdm(enumerate(chunked_df_list[start_index:])):
+    for index, chunk_df in enumerate(tqdm(chunked_df_list[start_index:])):
         instruction_list_translated = translate_list(chunk_df.instruction.to_list())
         input_list_translated = translate_list(chunk_df.input.to_list())
         output_list_translated = translate_list(chunk_df.output.to_list())
