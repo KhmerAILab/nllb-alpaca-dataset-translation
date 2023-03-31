@@ -92,19 +92,12 @@ def login_hugging_face(token: str) -> None:
 
 
 def nllb_translate(text_list):
-    tokenizer = AutoTokenizer.from_pretrained(
-        "facebook/nllb-200-distilled-600M", use_auth_token=True, src_lang="eng_Latn"
-    )
-    model = AutoModelForSeq2SeqLM.from_pretrained(
-        "facebook/nllb-200-distilled-600M", use_auth_token=True
-    )
-
     inputs = tokenizer(text_list, return_tensors="pt", padding=True)
 
     translated_tokens = model.generate(
         **inputs,
         forced_bos_token_id=tokenizer.lang_code_to_id["khm_Khmr"],
-        max_length=1000,
+        max_length=2048,
     )
     res_nllb = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)[0]
     return res_nllb
@@ -122,17 +115,23 @@ def translate_dataframe(df):
     os.makedirs(output_dir, exist_ok=True)
 
     # Check for dataframe rows that are not translatable
-    # df.apply(lambda x: x if is_translatable(x) else None, axis=1)
+    df['instruction'] = df.instruction.apply(lambda x: x if is_translatable(x) else None, axis=1)
+    df['input'] = df.input.apply(lambda x: x if is_translatable(x) else None, axis=1)
+    df['output'] = df.output.apply(lambda x: x if is_translatable(x) else None, axis=1)
 
+    # Drop rows with None
+    df = df.dropna()
+
+    # Split into chunks
     number_of_chunks = df.shape[0] // chunk_size
     chunked_df_list = np.array_split(df, number_of_chunks)
 
     start_index = 1
 
     for index, chunk_df in enumerate(chunked_df_list[start_index:]):
-        instruction_list_translated = translate_and_update_series(chunk_df.instruction)
-        input_list_translated = translate_and_update_series(chunk_df.input)
-        output_list_translated = translate_and_update_series(chunk_df.output)
+        instruction_list_translated = translate_list(chunk_df.instruction.to_list())
+        input_list_translated = translate_list(chunk_df.input.to_list())
+        output_list_translated = translate_list(chunk_df.output.to_list())
 
         translated_df = pd.DataFrame(
             {
@@ -150,6 +149,16 @@ chunk_size = 5
 output_dir = "./data/output/"
 
 login_hugging_face(None)
+
+# Load tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained(
+        "facebook/nllb-200-distilled-600M", use_auth_token=True, src_lang="eng_Latn"
+)
+model = AutoModelForSeq2SeqLM.from_pretrained(
+    "facebook/nllb-200-distilled-600M", use_auth_token=True
+)
+
+# Translate
 translate_dataframe(df)
 
 
