@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 # 1. Load dataset
 
-input_tasks_path = "tasks_52k_en.json"
+input_tasks_path = "/data/src_task/tasks_52k_en.json"
 
 with open(input_tasks_path, "rb") as f:
     json_data = json.loads(f.read())
