@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 # 1. Load dataset
 
-input_tasks_path = "alpaca_data_cleaned.json"
+input_tasks_path = "tasks_52k_en.json"
 
 with open(input_tasks_path, "rb") as f:
     json_data = json.loads(f.read())
@@ -22,7 +22,6 @@ with open(input_tasks_path, "rb") as f:
 def write_json_file(blob, file_path):
     with open(file_path, "w") as file:
         json.dump(blob, file, sort_keys=True)
-
 
 # 2.Utils
 def matches_regex(regex, text):
@@ -46,7 +45,6 @@ def contains_code(text):
 def contains_words(text):
     return matches_regex(r"[A-z]{3,}", text)  # words with at least three characters
 
-
 def is_translatable(text):
     if text == "":
         return True
@@ -56,6 +54,7 @@ def is_translatable(text):
 # 3. Translate
 def translate_and_update_series(text_series):
     # memorize whether and where the list contains non-translatable content
+
     is_translatable_index = text_series.apply(lambda x: is_translatable(x) is False)
     text_list_source_language = text_series.tolist()
 
@@ -74,8 +73,6 @@ def translate_and_update_series(text_series):
                 translated_list[index] = text_list_source_language[index]
 
     return translated_list
-
-
 def login_hugging_face(token: str) -> None:
     """
     Loging to Hugging Face portal with a given token.
@@ -89,7 +86,6 @@ def login_hugging_face(token: str) -> None:
     folder.save_token(token)
 
     return None
-
 
 def nllb_translate(text_list):
     inputs = tokenizer(text_list, return_tensors="pt", padding=True).to("cuda")
@@ -149,20 +145,18 @@ def translate_dataframe(df):
 
         write_json_file(translated_dict, f"{output_dir}chunk{start_index+index}.json")
 
-
-chunk_size = 5
+chunk_size = 10
 output_dir = "./data/output/"
-
 login_hugging_face(None)
 
 # Load tokenizer and model
 print("Loading tokenizer and model")
 tokenizer = AutoTokenizer.from_pretrained(
-    "facebook/nllb-200-distilled-600M", use_auth_token=True, src_lang="eng_Latn"
+    "facebook/nllb-200-3.3B", use_auth_token=False, src_lang="eng_Latn"
 )
 model = AutoModelForSeq2SeqLM.from_pretrained(
-    "facebook/nllb-200-distilled-600M",
-    use_auth_token=True,
+    "facebook/nllb-200-3.3B",
+    use_auth_token=False,
     device_map="auto",
     load_in_8bit=True,
 )
