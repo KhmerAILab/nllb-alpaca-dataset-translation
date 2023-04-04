@@ -11,7 +11,7 @@ Make sure you have a working installation of [Pytorch](https://pytorch.org/get-s
 
 2. cd nllb-alpaca-dataset-translation
 
-3. pip install huggingface_hub transformers pandas numpy tqdm 
+3. pip install huggingface_hub transformers pandas numpy tqdm accelerate bitsandbytes
 
 4. set which dataset you want to translate at line 15
 
